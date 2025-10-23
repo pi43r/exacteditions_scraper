@@ -18,14 +18,33 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Single Magazine Download
+
+Interactive mode:
+```bash
+python main.py
+```
+
+Command line:
 ```bash
 python main.py "Magazine Name" "https://cloudfront-url.../page-000001.webp?..."
 ```
 
-Or run interactively:
+### Batch Processing
 
+Download multiple magazines from a CSV file:
 ```bash
-python main.py
+python main.py --batch magazines.csv
+```
+
+#### CSV Format
+
+Create a `magazines.csv` file with one magazine per line:
+```csv
+Magazine Name 1,https://cloudfront-url.../page-000001.webp?...
+Magazine Name 2,https://cloudfront-url.../page-000001.webp?...
+# Lines starting with # are ignored
+,https://invalid-url  # Skipped (invalid)
 ```
 
 ## Getting the CloudFront URL
@@ -33,25 +52,62 @@ python main.py
 1. Open the magazine on exacteditions.com
 2. Right-click on any page
 3. Select **"Copy image link"** or **"Copy link"**
-4. Paste the URL when prompted
+4. Paste the URL when prompted or add to CSV file
 
 ## Output
 
 Downloads are saved to `output/{magazine_name}/`:
 
 - `{magazine_name}.pdf` - PDF with lossy JPEG compression (quality 90)
-- `{magazine_name}.epub` - EPUB with individual pages for device reading
-- `imgs/` - Original WebP page images
+- `{magazine_name}.epub` - EPUB with original WebP images and proper cover
+- `imgs/` - Original WebP page images (deleted by default)
 
 ## Options
 
+### Single Download
 ```bash
-python main.py "Magazine Name" "URL" --workers 5 --output both
+python main.py "Magazine" "URL" [OPTIONS]
 ```
 
-- `--workers` - Number of parallel downloads (default: 5)
-- `--output` - Output format:
+### Batch Processing
+```bash
+python main.py --batch magazines.csv [OPTIONS]
+```
+
+### Available Options
+
+- `--workers N` - Number of parallel downloads (default: 5)
+- `--output {pdf|epub|both|none}` - Output format (default: both)
   - `pdf` - Generate only PDF
   - `epub` - Generate only EPUB
-  - `both` - Generate both PDF and EPUB (default)
-  - `none` - Download images only, no PDF/EPUB generation
+  - `both` - Generate both PDF and EPUB
+  - `none` - Download images only, no conversion
+- `--keep-images` - Keep WebP images folder after conversion (default: delete)
+- `-v, --verbose` - Enable verbose logging
+
+### Examples
+
+```bash
+# Download one magazine, keep images
+python main.py "Magazine" "URL" --keep-images
+
+# Batch download, PDF only
+python main.py --batch magazines.csv --output pdf
+
+# Batch download with 10 workers
+python main.py --batch magazines.csv --workers 10
+
+# Verbose logging
+python main.py "Magazine" "URL" -v
+```
+
+## Features
+
+- ✅ Parallel downloads with configurable workers
+- ✅ Skip already downloaded images (no 403 errors)
+- ✅ PDF with lossy compression for small file size
+- ✅ EPUB with original WebP images for minimal size
+- ✅ Proper magazine cover handling in EPUB
+- ✅ Batch processing for multiple magazines
+- ✅ CSV input for automation
+- ✅ Graceful error handling per magazine
