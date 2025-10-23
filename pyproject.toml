@@ -1,0 +1,11 @@
+[project]
+name = "exacteditions-downloader"
+version = "0.1.0"
+description = "Download magazines from exacteditions.com and convert to PDF and EPUB"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.32.0",
+    "Pillow>=10.0.0",
+    "ebooklib>=0.19",
+]
