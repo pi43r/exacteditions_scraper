@@ -13,3 +13,4 @@ wheels/
 .vscode
 
 output
+.DS_Store
